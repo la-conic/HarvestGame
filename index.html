@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+@font-face
+{
+	font-family: AtlantisInternational;
+	src: url( fonts/AtlantisInternational-jen0.ttf );
+}
+
+@font-face
+{
+	font-family: WMLeaves1;
+	src: url( fonts/wmleaves1.ttf );
+}
+
+body
+{
+	background-color: rgb( 48, 16, 0 );
+	border-top: 3vh solid black;
+	border-bottom: 3vh solid black;
+	height: 94vh;
+	margin: 0px;
+
+	color: rgb( 240, 240, 240 );
+	text-shadow: 0px 2px grey;
+	font-family: AtlantisInternational;
+	font-size: 28px;
+	user-select: none;
+	
+}
+
+progress
+{
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+
+	border: none;
+}
+
+.Header
+{
+	/* margin: 28px 0px; */
+}
+
+.Link
+{
+	color: grey;
+	text-shadow: 0px 0px;
+
+	margin: 0px 7px;
+}
+
+.Button
+{
+	background-color: grey;
+	padding: 0px 48px;
+}
+
+.Resource
+{
+	margin: -7px 0px;
+}
+
+.Panel
+{
+	position: absolute;
+	display: none;
+}
+
+.ProgressOverlay
+{
+	position: absolute;
+}
+
+.Column
+{
+	background-color: rgb( 132, 108, 84 );
+	width: 18%;
+	vertical-align: top;
+	padding: 7px;
+
+	color: rgb( 48, 16, 0 );
+	text-shadow: none;
+}
+
+#ColumnCenter
+{
+	width: 64%;
+	height: 66vh;
+	vertical-align: top;
+	padding: 0px 28px;
+}
+
+#LinkWild
+{
+	color: rgb( 240, 240, 240 );
+	text-shadow: 0px 2px grey;
+}
+
+#PanelWild
+{
+	display: inline;
+}
+
+#DingbatWheat
+{
+	--flWheatCycle: 0%;
+
+	background: linear-gradient( to top,
+		white var( --flWheatCycle ),
+		rgba( 255, 255, 255, 0 ) 0%
+	);
+	background-color: rgb( 255, 192, 80 );
+
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+
+	font-family: WMLeaves1;
+	font-size: 100px;
+	cursor: pointer;
+	text-shadow: none;
+}
+
+#ProgressWheat1
+{
+	z-index: 1;
+}
+
+#ProgressWheat1::-webkit-progress-value
+{
+	background-color: green;
+}
+#ProgressWheat2::-webkit-progress-value
+{
+	background-color: purple;
+}
+#ProgressWheat3::-webkit-progress-value
+{
+	background-color: cyan;
+}
+#ProgressWheat4::-webkit-progress-value
+{
+	background-color: orange;
+}
+
+#ProgressWheat1::-moz-progress-bar
+{
+	background-color: green;
+}
+#ProgressWheat2::-moz-progress-bar
+{
+	background-color: purple;
+}
+#ProgressWheat3::-moz-progress-bar
+{
+	background-color: cyan;
+}
+#ProgressWheat4::-moz-progress-bar
+{
+	background-color: orange;
+}
+</style>
+
+<script src="scripts/jquery-3.6.0.min.js"></script>
+
+</head>
+
+<body>
+<table style="width: 100%">
+	<tr>
+		<td class="Column">
+			
+
+		</td>
+
+		<td id="ColumnCenter">
+
+			<p class="Header">
+				<span id="LinkWild" class="Link" onclick="GoToLocation( Location_t.WILD )">Wild</span>
+				<span id="LinkFarm" class="Link" onclick="GoToLocation( Location_t.FARM )">Farm</span>
+				<span id="LinkJournal" class="Link" onclick="GoToLocation( Location_t.JOURNAL )">Journal</span>
+				<span id="LinkBonfire" class="Link" onclick="GoToLocation( Location_t.BONFIRE )">Bonfire</span>
+				<span id="LinkMine" class="Link" onclick="GoToLocation( Location_t.MINE )">Mine</span>
+				<span id="LinkCraft" class="Link" onclick="GoToLocation( Location_t.CRAFT )">Craft</span>
+			</p>
+
+			<div id="PanelWild" class="Panel">
+				<span id="DingbatWheat">f</span>
+
+				<p id="TextCycleWheat">0%</p>
+				
+				<progress id="ProgressWheat1" class="ProgressOverlay"></progress>
+				<progress id="ProgressWheat2" class="ProgressOverlay"></progress>
+				<progress id="ProgressWheat3" class="ProgressOverlay"></progress>
+				<progress id="ProgressWheat4" class="ProgressOverlay"></progress>
+
+				<br>
+			</div>
+
+			<div id="PanelFarm" class="Panel">
+				<p>
+					<span id="ButtonCrop" class="Button" onclick="">Crop</span>
+					<progress id="ProgressCrop"></progress>
+				</p>
+				<p>
+					<span id="ButtonMineral" class="Button" onclick="">Mineral</span>
+					<progress id="ProgressMineral"></progress>
+				</p>
+				<p>
+					<span id="ButtonFlora" class="Button" onclick="">Flora</span>
+					<progress id="ProgressFlora"></progress>
+				</p>
+				<p>
+					<span id="ButtonHerb" class="Button" onclick="">Herb</span>
+					<progress id="ProgressHerb"></progress>
+				</p>
+			</div>
+
+			<div id="PanelCraft" class="Panel">
+				<p>
+					<progress id="ProgressMetal"></progress>
+				</p>
+				<p>
+					<progress id="ProgressMinecart"></progress>
+				</p>
+				<p>
+					<progress id="ProgressOilWell"></progress>
+				</p>
+				<p>
+					<progress id="ProgressOilBarrel"></progress>
+				</p>
+			</div>
+		</td>
+
+		<td class="Column">
+			
+			<p id="ResourceSeed" class="Resource">
+				<span id="TextLabelSeed">Seed: </span>
+				<span id="TextValueSeed"></span>
+			</p>
+			<p id="ResourceCrop" class="Resource">
+				<span id="TextLabelCrop">Crop: </span>
+				<span id="TextValueCrop"></span>
+			</p>
+			<p id="ResourceCrop" class="Resource">
+				<span id="TextLabelCrop">Mature Seed: </span>
+				<span id="TextValueCrop"></span>
+			</p>
+			<p id="ResourceMineral" class="Resource">
+				<span id="TextLabelMineral">Mineral: </span>
+				<span id="TextValueMineral"></span>
+			</p>
+			<p id="ResourceFlora" class="Resource">
+				<span id="TextLabelFlora">Flora: </span>
+				<span id="TextValueFlora"></span>
+			</p>
+			<p id="ResourceHerb" class="Resource">
+				<span id="TextLabelHerb">Herb: </span>
+				<span id="TextValueHerb"></span>
+			</p>
+			<p id="ResourceHerdAnimal" class="Resource">
+				<span id="TextLabelHerdAnimal">Herd Animal: </span>
+				<span id="TextValueHerdAnimal"></span>
+			</p>
+
+			<br>
+			<p id="ResourcePickaxe" class="Resource">
+				<span id="TextLabelPickaxe">Pickaxe: </span>
+				<span id="TextValuePickaxe"></span>
+			</p>
+			<p id="ResourceMiner" class="Resource">
+				<span id="TextLabelMiner">Miner: </span>
+				<span id="TextValueMiner"></span>
+			</p>
+			<p id="ResourceOil" class="Resource">
+				<span id="TextLabelOil">Oil: </span>
+				<span id="TextValueOil"></span>
+			</p>
+			<p id="ResourceStone" class="Resource">
+				<span id="TextLabelStone">Stone: </span>
+				<span id="TextValueStone"></span>
+			</p>
+			<p id="ResourceOre" class="Resource">
+				<span id="TextLabelOre">Ore: </span>
+				<span id="TextValueOre"></span>
+			</p>
+			<p id="ResourceGem" class="Resource">
+				<span id="TextLabelGem">Gem: </span>
+				<span id="TextValueGem"></span>
+			</p>
+
+			<br>
+			<p id="ResourceMetal" class="Resource">
+				<span id="TextLabelMetal">Metal: </span>
+				<span id="TextValueMetal"></span>
+			</p>
+			<p id="ResourceMinecart" class="Resource">
+				<span id="TextLabelMinecart">Minecart: </span>
+				<span id="TextValueMinecart"></span>
+			</p>
+			<p id="ResourceOilWell" class="Resource">
+				<span id="TextLabelOilWell">Oil Well: </span>
+				<span id="TextValueOilWell"></span>
+			</p>
+			<p id="ResourceOilBarrel" class="Resource">
+				<span id="TextLabelOilBarrel">Oil Barrel: </span>
+				<span id="TextValueOilBarrel"></span>
+			</p>
+		</td>
+	</tr>
+</table>
+
+<script>
+	var Location_t = 
+	{
+		WILD: "PanelWild",
+		FARM: "PanelFarm",
+		JOURNAL: "PanelJournal",
+		BONFIRE: "PanelBonfire",
+		MINE: "PanelMine",
+		CRAFT: "PanelCraft"
+	}
+
+	var m_nSeed = 0;
+
+	var m_flWheatCycle = 0;
+	var m_flWheatProgress1 = 0.0;
+	var m_flWheatProgress2 = 0.0;
+	var m_flWheatProgress3 = 0.0;
+	var m_flWheatProgress4 = 0.0;
+
+	var m_Location = Location_t.WILD;
+
+	var m_OnSetIntervalMouse = "";
+
+	var m_OnSetInterval = setInterval(
+			function()
+			{
+				m_flWheatCycle = m_flWheatCycle
+					+ 0.01
+					+ ( 0.3 * m_flWheatProgress1 )
+					+ ( 0.6 * m_flWheatProgress2 )
+					+ ( 1.2 * m_flWheatProgress3 )
+					+ ( 2.4 * m_flWheatProgress4 );
+
+				if ( m_flWheatCycle > 100 )
+				{
+					m_flWheatCycle = 0;
+
+					m_nSeed = m_nSeed + RandomInt( 2, 3 );
+				}
+
+				//RandomInt( 20, 40 );
+
+				var DingbatWheat = document.getElementById( "DingbatWheat" );
+				DingbatWheat.style.setProperty( "--flWheatCycle", m_flWheatCycle + "%" );
+
+				var TextCycleWheat = document.getElementById( "TextCycleWheat" );
+				TextCycleWheat.innerHTML = Math.round( m_flWheatCycle ) + "%";
+				
+				var ProgressWheat1 = document.getElementById( "ProgressWheat1" );
+				var ProgressWheat2 = document.getElementById( "ProgressWheat2" );
+				var ProgressWheat3 = document.getElementById( "ProgressWheat3" );
+				var ProgressWheat4 = document.getElementById( "ProgressWheat4" );
+				
+				ProgressWheat1.setAttribute( "value", m_flWheatProgress1 );
+				ProgressWheat2.setAttribute( "value", m_flWheatProgress2 );
+				ProgressWheat3.setAttribute( "value", m_flWheatProgress3 );
+				ProgressWheat4.setAttribute( "value", m_flWheatProgress4 );
+
+				if ( m_flWheatProgress1 == 1.0 )
+				{
+					ProgressWheat2.style.setProperty( "z-index", 2 );
+				}
+				if ( m_flWheatProgress2 == 1.0 )
+				{
+					ProgressWheat3.style.setProperty( "z-index", 3 );
+				}
+				if ( m_flWheatProgress3 == 1.0 )
+				{
+					ProgressWheat4.style.setProperty( "z-index", 4 );
+				}
+
+				if ( m_flWheatProgress3 < 1.0 )
+				{
+					ProgressWheat4.style.setProperty( "z-index", 0 );
+				}
+				if ( m_flWheatProgress2 < 1.0 )
+				{
+					ProgressWheat3.style.setProperty( "z-index", 0 );
+				}
+				if ( m_flWheatProgress1 < 1.0 )
+				{
+					ProgressWheat2.style.setProperty( "z-index", 0 );
+				}
+
+				var TextSeed = document.getElementById( "TextValueSeed" );
+				TextSeed.innerHTML = m_nSeed;
+			}
+			, 1 );
+
+	$( "#DingbatWheat" ).on( "mousedown mouseup",
+	function OnMouseState( event )
+	{
+		if ( event.type == "mousedown" )
+		{
+			clearInterval( m_OnSetIntervalMouse );
+
+			m_OnSetIntervalMouse = setInterval(
+			function()
+			{
+				m_flWheatProgress1 = Math.min( m_flWheatProgress1 + 0.002, 1.0 )
+
+				if ( m_flWheatProgress1 == 1.0 )
+				{
+					m_flWheatProgress2 = Math.min( m_flWheatProgress2 + 0.002, 1.0 )
+				}
+				if ( m_flWheatProgress2 == 1.0 )
+				{
+					m_flWheatProgress3 = Math.min( m_flWheatProgress3 + 0.002, 1.0 )
+				}
+				if ( m_flWheatProgress3 == 1.0 )
+				{
+					m_flWheatProgress4 = Math.min( m_flWheatProgress4 + 0.002, 1.0 )
+				}
+			}
+  			, 1 );
+		}
+
+		if ( event.type == "mouseup" )
+		{
+			clearInterval( m_OnSetIntervalMouse );
+
+			m_OnSetIntervalMouse = setInterval(
+			function()
+			{
+				m_flWheatProgress4 = Math.max( 0.0, m_flWheatProgress4 - 0.002 )
+
+				if ( m_flWheatProgress4 == 0.0 )
+				{
+					m_flWheatProgress3 = Math.max( 0.0, m_flWheatProgress3 - 0.002 )
+				}
+				if ( m_flWheatProgress3 == 0.0 )
+				{
+					m_flWheatProgress2 = Math.max( 0.0, m_flWheatProgress2 - 0.002 )
+				}
+				if ( m_flWheatProgress2 == 0.0 )
+				{
+					m_flWheatProgress1 = Math.max( 0.0, m_flWheatProgress1 - 0.002 )
+				}
+			}
+  			, 1 );
+		}
+    }
+	);
+
+	function GoToLocation( iLocation )
+	{
+		var iPanel = document.getElementById( m_Location );
+		iPanel.style.setProperty( "display", "none" );
+
+		m_Location = iLocation;
+
+		iPanel = document.getElementById( iLocation );
+		iPanel.style.setProperty( "display", "inline" );
+	}
+
+	function RandomInt( nMin, nMax )
+	{
+  		return Math.floor( Math.random() * ( nMax - nMin + 1 ) ) + nMin;
+	}
+</script>
+</body>
+
+</html>
